@@ -1944,15 +1944,16 @@ def shell():
 
     if args.fserver:
         printer("Fserver starting up")
-        FURL = raw_input('URL: ')
-        Flat = input('Latitude: ')
-        Flon = input('Longitute: ')
-        Fcity = raw_input('City name: ')
-        Fcountry = raw_input('Country name: ')
-        Fcc = raw_input('Country code: ')
-        Fsponsor = raw_input('Sponsor name: ')
-        FID = input('Server ID: ')
         Fhost = raw_input('Host address: ')
+        FURL = 'http://' + Fhost + '/speedtest/upload.php'
+        Flat = '40'
+        Flon = '40'
+        Fcity = 'NoCity'
+        Fcountry = 'NoCountry'
+        Fcc = 'NoCC'
+        Fsponsor = 'NoSponsor'
+        FID = '1234'
+        
         speedtest.write_servers(servers=FID, exclude=args.exclude, Flat=Flat, Flon=Flon, FURL=FURL, Fhost=Fhost, Fcity=Fcity, Fcountry=Fcountry, Fcc=Fcc, Fsponsor=Fsponsor, FID=FID)
 
     if not args.mini and not args.fserver:
