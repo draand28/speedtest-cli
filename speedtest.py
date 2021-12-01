@@ -1363,6 +1363,33 @@ class Speedtest(object):
 
         return self.servers
 
+    def write_servers(self, servers=None, exclude=None, Flat=None, Flon=None, FURL=None, Fhost=None, Fcity=None, Fcountry=None, Fcc=None, Fsponsor=None, FID=None):
+        """Retrieve a the list of speedtest.net servers, optionally filtered
+        to servers matching those specified in the ``servers`` argument
+        """
+        if servers is None:
+            servers = []
+
+        if exclude is None:
+            exclude = []
+
+        self.servers.clear()
+
+        errors = []
+                    #try:
+                    #     attrib = server.attrib
+                    #except AttributeError:
+                    #   attrib = dict(list(server.attributes.items()))
+        #attrib = dict([('url',FURL), ('lat',Flat), ('lon',Flon),('name', Fcity), ('country',Fcountry),('cc', Fcc), ('sponsor',Fsponsor), ('id',FID), ('host',Fhost)])
+        attrib = {'url': FURL, 'lat': Flat, 'lon': Flon, 'name': Fcity, 'country': Fcountry, 'cc': Fcc, 'sponsor': Fsponsor, 'id': FID, 'host': Fhost}
+
+        d = distance(self.lat_lon,(float(Flat),float(Flon)))
+        attrib['d'] = d
+        try:
+            self.servers[d].append(attrib)
+        except KeyError:
+            self.servers[d] = [attrib]
+
     def set_mini_server(self, server):
         """Instead of querying for a list of servers, set a link to a
         speedtest mini server
@@ -1784,6 +1811,8 @@ def parse_args():
                         help='Show the version number and exit')
     parser.add_argument('--debug', action='store_true',
                         help=ARG_SUPPRESS, default=ARG_SUPPRESS)
+    parser.add_argument('--fserver', action='store_true',
+                        help='Add URL, coordinates, city, country, cc, sponsor, id and host for a server that does not appear on --list')
 
     options = parser.parse_args()
     if isinstance(options, tuple):
@@ -1913,7 +1942,20 @@ def shell():
     printer('Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'],
             quiet)
 
-    if not args.mini:
+    if args.fserver:
+        printer("Fserver starting up")
+        FURL = raw_input('URL: ')
+        Flat = input('Latitude: ')
+        Flon = input('Longitute: ')
+        Fcity = raw_input('City name: ')
+        Fcountry = raw_input('Country name: ')
+        Fcc = raw_input('Country code: ')
+        Fsponsor = raw_input('Sponsor name: ')
+        FID = input('Server ID: ')
+        Fhost = raw_input('Host address: ')
+        speedtest.write_servers(servers=FID, exclude=args.exclude, Flat=Flat, Flon=Flon, FURL=FURL, Fhost=Fhost, Fcity=Fcity, Fcountry=Fcountry, Fcc=Fcc, Fsponsor=Fsponsor, FID=FID)
+
+    if not args.mini and not args.fserver:
         printer('Retrieving speedtest.net server list...', quiet)
         try:
             speedtest.get_servers(servers=args.server, exclude=args.exclude)
@@ -1941,8 +1983,8 @@ def shell():
 
     results = speedtest.results
 
-    printer('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
-            '%(latency)s ms' % results.server, quiet)
+    #printer('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: ' '%(latency)s ms' % results.server, quiet)
+    printer( results.server, quiet)
 
     if args.download:
         printer('Testing download speed', quiet,
