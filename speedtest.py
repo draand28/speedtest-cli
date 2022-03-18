@@ -1364,9 +1364,6 @@ class Speedtest(object):
         return self.servers
 
     def write_servers(self, servers=None, exclude=None, Flat=None, Flon=None, FURL=None, Fhost=None, Fcity=None, Fcountry=None, Fcc=None, Fsponsor=None, FID=None):
-        """Retrieve a the list of speedtest.net servers, optionally filtered
-        to servers matching those specified in the ``servers`` argument
-        """
         if servers is None:
             servers = []
 
@@ -1376,11 +1373,6 @@ class Speedtest(object):
         self.servers.clear()
 
         errors = []
-                    #try:
-                    #     attrib = server.attrib
-                    #except AttributeError:
-                    #   attrib = dict(list(server.attributes.items()))
-        #attrib = dict([('url',FURL), ('lat',Flat), ('lon',Flon),('name', Fcity), ('country',Fcountry),('cc', Fcc), ('sponsor',Fsponsor), ('id',FID), ('host',Fhost)])
         attrib = {'url': FURL, 'lat': Flat, 'lon': Flon, 'name': Fcity, 'country': Fcountry, 'cc': Fcc, 'sponsor': Fsponsor, 'id': FID, 'host': Fhost}
 
         d = distance(self.lat_lon,(float(Flat),float(Flon)))
